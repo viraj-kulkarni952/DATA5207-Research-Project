@@ -1,0 +1,471 @@
+---
+title: 'Research project: Domestic Violence factors in New South Wales Local Government
+  Areas'
+author: '510251659'
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+library(gridExtra)
+library(stringr)
+library(psych)
+library(ggpubr)
+library(caret)
+library(knitr)
+library(lemon)
+knit_print.data.frame <- lemon_print
+```
+
+# 1. Introduction 
+Domestic violence is considered to be a significant issue that impacts many individuals around the world. Domestic violence involves acts of violence between individuals who have had an intimate relationship with each other and can be further divided into aspects including emotional, physical, and psychological abuse (Mitchell 2011). Australia is one that has experienced higher levels of domestic violence. In particular, the state of New South Wales has had higher rates of domestic violence than other states.
+
+This research paper will go about answering the question, “What explains domestic violence rates in NSW local government areas?” The paper will focus on exploring different factors that explain the rates of domestic violence in the NSW Local Government Areas (LGAs).
+
+Different factors, including socioeconomic factors, will be explored in this paper. This includes median household income, male & female unemployment rate, and highest educational attainment. Other factors will include the consumption of depressants, in particular, the consumption of alcohol due to its effect on individuals. The factor of access to government services will also be analysed in which rural and urban areas will be compared with each other regarding the rates of domestic violence as rural areas tend to lack government services compared to urban areas.
+
+It is hypothesised that LGAs with lower household median income, high male unemployment rates, lower male & female educational attainment, and high alcohol consumption and LGAs that are rural will have higher rates of domestic violence.
+
+## 1.1 Findings
+From the research that was undergone in the paper, it was found that LGAs with a lower median household income tend to have higher rates of domestic violence. The male unemployment rate was also found to have a much stronger correlation to domestic violence in comparison to the female unemployment rates. Bachelor’s degree was found to have a negative, weak relationship with domestic violence, while further evidence will be required to determine the correlation between lower educational attainment and domestic violence rates. It was also found that alcohol is one key factor that plays a role in the overall domestic cases, as it was found that around 30% of all cases are alcohol-related. For urban and rural LGA comparison, while 90% of total cases are in urban areas, there are higher rates in the rural LGAs.
+
+\newpage
+# 2. Literature and theory
+Lower socioeconomic inconsistency and status are associated with higher levels of stress and frustration, which in turn may lead to wife abuse (Lubker 2004). In low-income and middle-income households, women’s income increasing reduces the incidence of violence (Bharati & Famoye 2004). In developing and industrialised nations, there have been frustrations from being unemployed or irregular employment has been linked to forms of violence (Cramer 2011).
+
+Mouzos and Makkai (2020) claim that researchers have found an inverse relationship between women’s educational attainment and the risk of domestic violence, while others have found higher levels of violence reported by women with higher educational attainment. However, Naz & Ashraf (2020) claim that women having higher education increases their ability to make their own independent choices and assert legal rights, which may result in them reporting these cases.
+
+Miczek et al. (2015) claim that alcohol has been linked to around half of all violent assaults, including domestic violence. Studies estimate that men were drinking in about 45% of domestic violence cases, and women were drinking in about 20% of the cases (Caetano et al. 2001). This is due to the inhibition due to alcohol, in which a study by Rose & Duka (2006) showed that test scores by individuals with more alcohol had more mistakes than those that had less alcohol in their system.
+
+Compared to urban areas, rural areas generally lack government services, such as law enforcement or medical services. Services in non-urban areas are affected due to the scarcity and the distance of these services for women to reach these services (Campo et al. 2015). Further issues include a lack of affordable legal services and longer response times for emergency services (Campo et al. 2015). Those living in remote communities are 24 times more likely to be hospitalised as a result of domestic violence than people living in the cities. (Community Legal Centres 2022, para. 1).
+
+
+# 3. Data and methodology 
+Various data sources have been used to research the question of this paper. Some data sources include the 2016 and 2021 Census data and the NSW Bureau of Crime Statistics and Research (BOCSAR). The census data will consist of the data for socioeconomic indicators previously mentioned or the classification of LGAs. The data from BOCSAR has time-series data of reported domestic violence cases by LGA from 1995 to 2022. The data also includes cases in which alcohol was involved in the case of abuse. These data sources are considered highly reliable due to them being undergone by the government organisations of the Australian Bureau of Statistics (ABS), in which the census is mandatory for citizens. They must be answered truthfully, which helps to further cope with bias in the data. In contrast, BOCSAR data is data from law enforcement organisations to which they perform an investigation on cases. However, BOCSAR data is prone to bias due to the validity of cases in which underreporting or false reporting may occur, causing skews and a lack of accuracy in the final results. There are no confounding variables that have been identified in this research.
+
+The datasets will be analysed using various graphs to identify the relationships between the variables and domestic violence rates. Firstly, pre-processing will be undergone, primarily for modelling. Standardisation will be performed on the variables with high variations, such as median household income. Encoding will be used for urban/rural LGAs which are classified based on the Australian Classification of Local Governments. Should any missing values be encountered, they will be dealt with by imputing values based on the mean from the overall column. Analysis includes scatter plots with lines of best fit to map the relationship between the variables so that correlation analysis may be performed. The independent variables will make up the factors that are being used to measure the dependent variable, which is domestic violence rates per capita basis, to take into account the population between LGAs. The line of best fit will allow to determine if the relationship is positive or negative. Linear modelling is used due to the continuous dependent variable with various independent variables.
+
+A limitation of the data and methodology is that for linear regression, the assumptions must be met so that the results are not considered to be misleading. Aggarwal & Ranganathan (2017, p. 101) discuss that the x and y variables need to be linear, and then the variables of samples must be independent of each other when conducting the analysis. External factors such as mental health disorders are another limitation as they may be considered confidential due to patient confidentiality. Another limitation is the overall accuracy of the crime data from underreporting as individuals may not report their case due to fear of retaliation or believing police may not take enough action. This is also applicable to false reporting of cases.
+
+
+# 4. Results
+```{r}
+#Import Domestic Violence Datasets and Split
+DomesticViolenceRates20162022 <- read.csv("Data/Domestic_Violence_LGAs - 2016 to 2022.csv")
+DomesticViolenceRates20162022_filter <- DomesticViolenceRates20162022 %>%
+  filter(DomesticViolenceRates20162022$Offence.type == "Domestic violence related assault")
+
+#Calculate Domestic Violence Rate per 1,000 - 2016
+DomesticViolenceRates20162022_filter <- DomesticViolenceRates20162022_filter %>%
+  mutate(Domestic_Violence_Rate_2016 = (Jan...Dec.2016 / LGA_Population_2016) * 1000)
+
+#Calculate Domestic Violence Rate per 1,000 - 2021
+DomesticViolenceRates20162022_filter <- DomesticViolenceRates20162022_filter %>%
+  mutate(Domestic_Violence_Rate_2021 = (Jan...Dec.2021 / LGA_Population_2021) * 1000)
+```
+
+## 4.1 Median Household Income
+```{r}
+# Import dataset of median_household_income, domestic violence rates and population
+median_hhld_income2016 <- read.csv("Data/2016Census_NSW_LGA_Median_Income_Household.csv")
+median_hhld_income2021 <- read.csv("Data/2021Census_G40C_median_household_income.csv")
+
+#join domestic violence rates and median household income - 2016
+merged_dataIncomeDVRate_2016 <- merge(DomesticViolenceRates20162022_filter, median_hhld_income2016, 
+                                 by.x = "Local.Government.Area", by.y="LGA")
+
+#join domestic violence rates and median household income - 2021
+merged_dataIncomeDVRate_2021 <- merge(DomesticViolenceRates20162022_filter, median_hhld_income2021, 
+                                 by.x = "Local.Government.Area", by.y="LGA")
+```
+```{r}
+# Plot scatter graph with line of best fit
+HHLDIncome_DV_2016 <- ggplot(merged_dataIncomeDVRate_2016, aes(x = Median_total_household_income_weekly, y = Domestic_Violence_Rate_2016)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Median Household Income", y = "Domestic Violence Rate (Per 1,000)") +
+  ggtitle("Scatter Plot of Domestic Violence Rate vs Median Household Income - 2016") +
+  theme(axis.title.y = element_text(size = 9)) + 
+  stat_cor(method='pearson')
+
+# Plot scatter graph with line of best fit
+HHLDIncome_DV_2021 <- ggplot(merged_dataIncomeDVRate_2021, aes(x = Median_tot_household_income_weekly, y = Domestic_Violence_Rate_2021)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Median Household Income", y = "Domestic Violence Rate (Per 1,000)") +
+  ggtitle("Scatter Plot of Domestic Violence Rate vs Median Household Income - 2021") +
+  theme(axis.title.y = element_text(size = 9)) +
+  stat_cor(method='pearson')
+```
+
+```{r fig1, fig.align='center', fig.cap = "Domestic Violence Rate vs Median Household Income - 2016 and 2021", fig.height=7, fig.width=8, message=FALSE, warning=FALSE}
+grid.arrange(HHLDIncome_DV_2016, HHLDIncome_DV_2021, nrow=2.5)
+```
+
+Figure 1 depicts the relationship between the rate of domestic violence with the median household income by LGA for 2016 and 2021. Correlation coefficients of -0.33 and -0.32 were achieved for these years, indicating a moderate negative correlation between the two variables. This negative relationship indicates that as median household income increases, the rate of domestic violence decreases and vice versa. P-values of 0.00015 and 0.00025 were achieved, indicating strong evidence against the null hypothesis for no correlation, and the alternative hypothesis should be accepted, making the correlation statistically significant, indicating that this variable impacts domestic violence. This is further reinforced by the literature of Bharati & Famoye (2004), in which, for low and middle-income households, a rise in income will reduce violence against women.
+
+
+## 4.2 Unemployment Rate
+```{r}
+# Import dataset of median_household_income, domestic violence rates and population
+unemployment2016 <- read.csv("Data/2016Census_G43_unemployment.csv")
+unemployment2021 <- read.csv("Data/2021Census_G43_unemployment.csv")
+
+#join domestic violence rates and unemployment rate - 2016
+merged_dataUnemploymentDVRate_2016 <- merge(DomesticViolenceRates20162022_filter, unemployment2016, 
+                                 by.x = "Local.Government.Area", by.y="LGA")
+
+#join domestic violence rates and unemployment rate - 2021
+merged_dataUnemploymentDVRate_2021 <- merge(DomesticViolenceRates20162022_filter, unemployment2021, 
+                                 by.x = "Local.Government.Area", by.y="LGA")
+
+```
+
+### 4.2.1 Male Unemployment
+```{r}
+# Plot scatter graph with line of best fit
+MaleUnemployment_DV_2016 <- ggplot(merged_dataUnemploymentDVRate_2016, aes(x = Labour_force_status_Percent_Unemployment_Males, y = Domestic_Violence_Rate_2016)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Unemployment Rate (%)", y = "Domestic Violence Rate (Per 1,000)") +
+  ggtitle("Scatter Plot of Domestic Violence Rate vs Male Unemployment Rate - 2016") +
+  theme(axis.title.y = element_text(size = 9)) + 
+  stat_cor(method='pearson')
+
+# Plot scatter graph with line of best fit
+MaleUnemployment_DV_2021 <- ggplot(merged_dataUnemploymentDVRate_2021, aes(x = Labour_force_status_Percent_Unemployment_Males, y = Domestic_Violence_Rate_2021)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Unemployment Rate (%)", y = "Domestic Violence Rate (Per 1,000)") +
+  ggtitle("Scatter Plot of Domestic Violence Rate vs Male Unemployment Rate - 2021") +
+  theme(axis.title.y = element_text(size = 9)) + 
+  stat_cor(method='pearson')
+```
+
+```{r fig2, fig.cap = "Domestic Violence Rate vs Male Unemployment Rate - 2016 and 2021", fig.height=7, fig.width=8, message=FALSE}
+grid.arrange(MaleUnemployment_DV_2016, MaleUnemployment_DV_2021, nrow=2.5)
+```
+
+The relationship between domestic violence rates and male unemployment rates are visualised in Figure 2 for 2016 and 2021. Correlation coefficients of 0.52 and 0.31 were achieved. The decrease in the correlation coefficient may be explained by the range of unemployment rates to which higher rates of unemployment were recorded for 2016. There is a moderate positive correlation between male unemployment rate and domestic violence rates, where higher rates of unemployment may cause higher rates of domestic violence. These are statistically significant where the null hypothesis for no correlation is rejected, and the alternate hypothesis of correlation is accepted due to the p-value that was produced from the two visualisations.
+
+\newpage
+### 4.2.2 Female Unemployment
+```{r}
+# Plot scatter graph with line of best fit
+FemaleUnemployment_DV_2016 <- ggplot(merged_dataUnemploymentDVRate_2016, aes(x = Labour_force_status_Percent_Unemployment_Females, y = Domestic_Violence_Rate_2016)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Unemployment Rate (%)", y = "Domestic Violence Rate (Per 1,000)") +
+  ggtitle("Scatter Plot of Domestic Violence Rate vs Female Unemployment Rate - 2016") +
+  theme(axis.title.y = element_text(size = 9)) + 
+  stat_cor(method='pearson')
+
+FemaleUnemployment_DV_2021 <- ggplot(merged_dataUnemploymentDVRate_2021, aes(x = Labour_force_status_Percent_Unemployment_Females, y = Domestic_Violence_Rate_2021)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Unemployment Rate (%)", y = "Domestic Violence Rate (Per 1,000)") +
+  ggtitle("Scatter Plot of Domestic Violence Rate vs Female Unemployment Rate - 2021") +
+  theme(axis.title.y = element_text(size = 9)) + 
+  stat_cor(method='pearson')
+```
+
+```{r fig3, fig.cap = "Domestic Violence Rate vs Female Unemployment Rate - 2016 and 2021", fig.height=7, fig.width=8, message=FALSE}
+grid.arrange(FemaleUnemployment_DV_2016, FemaleUnemployment_DV_2021, nrow=2.5)
+```
+
+The female unemployment rate has also been plotted against domestic violence rates, as shown in Figure 3. The range of values has decreased from 2016 to 2021, which has resulted in different results for these two years. For 2016, a moderately high correlation coefficient of 0.51 was achieved, while a low value of 0.12 was achieved for 2016. P-values of 1.3e-09 and 0.18 were achieved. 2016 female unemployment was shown to be much more statistically significant for correlation, while 2021 is where the null hypothesis of no correlation is accepted. 
+
+From these results, male unemployment was found to have a higher causation on domestic violence than female unemployment. It can be concluded that the male unemployment rate has a much stronger correlation with domestic violence rates compared to the female unemployment rate due to forms of violence has been linked to the frustrations of unemployment (Crimer 2011).
+
+\newpage
+## 4.3 Highest Educational Attainment
+```{r}
+# Import dataset of No Education
+Noeducation2016 <- read.csv("Data/2016Census_G16B_NSW_LGA_NoEducation.csv")
+Noeducation2021 <- read.csv("Data/2021Census_G16B_NSW_LGA_NoEducation.csv")
+
+#join domestic violence rates and no education - 2016
+merged_dataNoEducationDVRate_2016 <- merge(DomesticViolenceRates20162022_filter, Noeducation2016, 
+                                 by.x = "Local.Government.Area", by.y="LGA")
+
+#join domestic violence rates and no education - 2021
+merged_dataNoEducationDVRate_2021 <- merge(DomesticViolenceRates20162022_filter, Noeducation2021, 
+                                 by.x = "Local.Government.Area", by.y="LGA")
+
+merged_dataNoEducationDVRate_2021$PERSONS_Did_not_go_to_school_Per_Capita <- (merged_dataNoEducationDVRate_2021$PERSONS_Did_not_go_to_school_Total
+                                                                              / merged_dataNoEducationDVRate_2021$LGA_Population_2021) * 1000
+
+#-----------------------------------------------------------------------------------------------------
+
+#Import datasets of highest educational attainment - school
+highestSchoolEducation2016 <- read.csv("Data/2016Census_G16B_NSW_LGA_Year101112.csv")
+highestSchoolEducation2021 <- read.csv("Data/2021Census_G16B_NSW_LGA_Year101112.csv")
+
+#join domestic violence rates and unemployment rate - 2016
+merged_dataSchoolDVRate_2016 <- merge(DomesticViolenceRates20162022_filter, highestSchoolEducation2016, 
+                                 by.x = "Local.Government.Area", by.y="LGA")
+
+#join domestic violence rates and unemployment rate - 2021
+merged_dataSchoolDVRate_2021 <- merge(DomesticViolenceRates20162022_filter, highestSchoolEducation2021, 
+                                 by.x = "Local.Government.Area", by.y="LGA")
+
+merged_dataSchoolDVRate_2021$Highest_year_of_school_completed_Year_10_or_equivalent_Persons_Per_Capita <- (merged_dataSchoolDVRate_2021$Highest_year_of_school_completed_Year_10_or_equivalent_Persons/ merged_dataSchoolDVRate_2021$LGA_Population_2021) * 1000
+#-----------------------------------------------------------------------------------------------------
+
+#Import datasets of highest educational attainment - bachelors
+highestNonSchoolEducation2016 <- read.csv("Data/2016Census_G43_education.csv")
+highestNonSchoolEducation2021 <- read.csv("Data/2021Census_G40C_education.csv")
+
+#join domestic violence rates and unemployment rate - 2016
+merged_dataNonSchoolDVRate_2016 <- merge(DomesticViolenceRates20162022_filter, highestNonSchoolEducation2016, 
+                                 by.x = "Local.Government.Area", by.y="LGA")
+
+#join domestic violence rates and unemployment rate - 2021
+merged_dataNonSchoolDVRate_2021 <- merge(DomesticViolenceRates20162022_filter, highestNonSchoolEducation2021, 
+                                 by.x = "Local.Government.Area", by.y="LGA")
+
+merged_dataNonSchoolDVRate_2021$Highest_non_school_qualifications_Bachelor_Degree_Level_Persons_Per_Capita <- (merged_dataNonSchoolDVRate_2021$Highest_non_school_qualifications_Bachelor_Degree_Level_Persons/ merged_dataNonSchoolDVRate_2021$LGA_Population_2021) * 1000
+```
+
+```{r fig4, fig.cap = "Domestic Violence Rate vs Persons that did not attend school by LGA - 2021", fig.height=4, fig.width=8, message=FALSE}
+EducationDidNotGoSchool_2021 <- ggplot(merged_dataNoEducationDVRate_2021, aes(x = PERSONS_Did_not_go_to_school_Per_Capita, 
+                                                                              y = Domestic_Violence_Rate_2021)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Persons that did not go to school (Per 1,000)", y = "Domestic Violence Rate (Per 1,000)") +
+  ggtitle("Domestic Violence Rate vs Persons that did not attend school - 2021") +
+  theme(axis.title.y = element_text(size = 9)) + 
+  stat_cor(method='pearson')
+EducationDidNotGoSchool_2021
+```
+
+Figure 4 visualises the relationship between domestic violence rates and the per capita number of persons who did not attend school per LGA. The graph shows a cluster of low domestic violence rates with fewer persons who did not attend school. Few outliers of high domestic violence rates occurred for small amounts of individuals that did not attend school. A correlation coefficient of 0.031 indicates there is little to no positive correlation between the two variables. The high p-value of 0.73 further reinforces that the null hypothesis of no correlation is accepted. Based on simple observations from the graph, there are more cases where more people have attended school. Further underreporting may occur in the LGAs with fewer people that did not attend school, and this is further reinforced by Naz & Ashraf (2020) in which women having higher education may increase their ability to have independent choices and assertation of legal rights, which can increase the number of cases. In these LGAs, fewer victims may report the cases in LGAs with higher rates of individuals who did not attend school.
+
+```{r}
+# Plot scatter graph with line of best fit
+EducationWentToSchool_2021 <- ggplot(merged_dataSchoolDVRate_2021, 
+                                     aes(x = Highest_year_of_school_completed_Year_10_or_equivalent_Persons_Per_Capita, 
+                                         y = Domestic_Violence_Rate_2021)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Persons who completed school at Year 10 (Per 1,000)", y = "Domestic Violence Rate (Per 1,000)") +
+  ggtitle("Domestic Violence Rate vs Persons who completed school at Year 10 by LGA - 2021") +
+  theme(axis.title.y = element_text(size = 9)) + 
+  stat_cor(method='pearson')
+```
+
+```{r fig5, fig.cap = "Domestic Violence Rate vs Persons who completed school at Year 10 by LGA - 2021", fig.height=3.5, fig.width=8, message=FALSE}
+EducationWentToSchool_2021
+```
+
+\newpage
+The relationship between domestic violence rates and those who have completed school in year 10 is shown in Figure 5, which has a weak positive correlation between these two variables with a correlation coefficient of 0.094. A p-value of 0.3 indicates that the correlation is not statistically significant. From observations, there are varying results throughout the LGAs. As the number of persons who completed school in year 10 increases, there are more reports of domestic violence cases with few outliers of higher rates.
+
+```{r fig6, fig.cap = "Domestic Violence Rate vs Bachelor's Degree Holders by LGA - 2021", fig.height=3.5, fig.width=8, message=FALSE}
+# Plot scatter graph with line of best fit
+EducationBachelors_2021 <- ggplot(merged_dataNonSchoolDVRate_2021,
+                                  aes(x = Highest_non_school_qualifications_Bachelor_Degree_Level_Persons_Per_Capita, 
+                                      y = Domestic_Violence_Rate_2021)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Persons with highest qualification being Bachelor's Degree (Per 1,000)", y = "Domestic Violence Rate (Per 1,000)") +
+  ggtitle("Domestic Violence Rate vs Bachelor's Degree Holders by LGA - 2021") +
+  theme(axis.title.y = element_text(size = 9)) + 
+  stat_cor(method='pearson')
+EducationBachelors_2021
+```
+
+Figure 6 shows the per capita of individuals with the highest educational attainment of a bachelor’s degree vs. domestic violence rates. It is observed that higher rates of domestic violence are reported in LGAs, which have a lower per capita of individuals with bachelor’s degrees. It is relatively lower in LGAs, with more individuals that have a bachelor’s degree. This is further reinforced by the correlation coefficient of -0.31, in which there is a weak negative correlation between the two variables. The p-value of 0.00031 indicates strong evidence against the null hypothesis of no correlation, which can be concluded that individuals holding bachelor’s degrees have a relationship with domestic violence rates. Further reinforced by the literature of Mouzos & Makkai (2020), in which researchers have found an inverse relationship between educational attainment and the risk of domestic violence.
+
+Based on these findings for the three education types observed, further evidence will be required to justify those having lower educational attainment leading to higher domestic violence rates. This is based on results that were achieved for no school and for those who completed their education at year 10 while bachelor’s had more evidence for the results that were produced.
+
+## 4.4 Alcohol Consumption
+```{r}
+#LGA Alcohol
+LGA_Alcohol <- read.csv("Data/LGA_Alcohol_Related_Time_Day - 2018-2022.csv")
+LGA_Alcohol_filter <- LGA_Alcohol %>%
+  filter(LGA_Alcohol$Domestic.violence.related.assault == "Domestic violence related assault")
+
+```
+
+```{r}
+LGA_Alcohol <- read.csv("Data/LGA_Alcohol 2016 and 2022.csv")
+LGA_Alcohol$Year <- str_replace(LGA_Alcohol$Year, ",", "")
+
+```
+
+```{r}
+LGA_Alcohol_NonStack = ggplot(LGA_Alcohol, aes(x = Year, y = Value, fill = Alcohol.Non.Alcohol)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = Value), position = position_dodge(width = 0.9), vjust = 2.5, size=4) +
+  labs(x = "Year", y = "Domestic Violence Cases") +
+  ggtitle("Comparison of Alcohol-Related Domestic Violence Cases by Year - Total NSW") +
+  theme_minimal()
+
+LGA_Alcohol_Stack = ggplot(LGA_Alcohol, aes(x = Year, y = Value_., fill = Alcohol.Non.Alcohol)) +
+  geom_bar(stat = "identity", position = "stack") +
+  geom_text(aes(label = round(Value_., 2)), position = position_stack(vjust = 0.5), size = 4) +
+  labs(x = "Year", y = "Domestic Violence Cases (% of Total)") +
+  ggtitle("Comparison of Total Alcohol-Related Domestic Violence Cases by Year - Total NSW") +
+  theme_minimal()
+
+```
+
+```{r fig7, fig.cap = "Comparison of Alcohol & Non-Alcohol Related Domestic Violence Cases", fig.height=7, fig.width=8, message=FALSE}
+grid.arrange(LGA_Alcohol_NonStack, LGA_Alcohol_Stack, nrow=2)
+```
+
+Alcohol-related domestic violence cases were explored from BOCSAR in Figure 7. There was an overall increase in both alcohol and non-alcohol-related cases from 2018 to 2022. There was a decrease of 2.14% in which alcohol-related cases made up less proportion of all cases in 2022. This is attributed to a much more significant increase in non-alcohol-related cases. Alcohol-related cases comprised a large proportion of all domestic violence cases, with values of 30.51% and 28.37%. It can be determined that alcohol can help explain domestic violence rates in the LGAs. This can be further reinforced by studies from Miczek et al. (2015) claims that alcohol has been associated to close to half of all assault cases, inclusive of domestic violence.
+
+## 4.5 Access to Government Services
+```{r}
+DomesticViolenceRates20162021_urbanrural <- read.csv("Data/Urban_Vs_Rural2016-2021.csv")
+DomesticViolenceRates20162021_urbanrural$Year <- str_replace(LGA_Alcohol$Year, ",", "")
+```
+
+```{r}
+#Urban_vs_Rural_NonStack = ggplot(DomesticViolenceRates20162021_urbanrural, aes(x = Year, y = Domestic.Violence.Cases, fill = Urban.Rural)) +
+ # geom_bar(stat = "identity", position = "dodge") +
+  #geom_text(aes(label = Domestic.Violence.Cases), position = position_dodge(width = 0.9), vjust = -0.5) +
+  #labs(x = "Year", y = "Domestic Violence Cases") +
+  #ggtitle("Comparison of Urban and Rural LGAs Domestic Violence Cases by Year - Total NSW") +
+  #theme_minimal()
+
+Urban_vs_Rural_NonStack_rates = ggplot(DomesticViolenceRates20162021_urbanrural, aes(x = Year, y = Domestic.Violence.Rate.Per.1000, fill = Urban.Rural)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = round(Domestic.Violence.Rate.Per.1000, 2)), position = position_dodge(width = 0.9), vjust = 2.5, size=4) +
+  labs(x = "Year", y = "Domestic Violence Rate (Per 1,000)") +
+  ggtitle("Comparison of Urban and Rural LGAs Domestic Violence Per Capita Cases by Year - Total NSW") +
+  theme_minimal()
+
+Urban_vs_Rural_Stack = ggplot(DomesticViolenceRates20162021_urbanrural, aes(x = Year, y = X..cases, fill = Urban.Rural)) +
+  geom_bar(stat = "identity", position = "stack") +
+  geom_text(aes(label = round(X..cases, 2)), position = position_stack(vjust = 0.5)) +
+  labs(x = "Year", y = "Domestic Violence Cases (% of Total)") +
+  ggtitle("Comparison of Urban and Rural LGAs Domestic Violence Total Cases by Year - Total NSW") +
+  theme_minimal()
+
+```
+
+```{r fig8, fig.cap = "Comparison of Urban and Rural LGAs vs Domestic Violence Cases", fig.height=7, fig.width=8, message=FALSE}
+grid.arrange(Urban_vs_Rural_NonStack_rates, Urban_vs_Rural_Stack, nrow=2)
+```
+
+The visualisation of Figure 8 goes through the comparison compares domestic violence rates between urban and rural LGAs. It was found that the rates of rural LGAs were much higher than urban LGAs, which can be explained by variations in populations as urban LGAs have higher populations. However, considering total cases, it was found that 90% of all reported cases are in those of urban LGAs, with rural taking up the remaining 10% of cases. Underreporting may be a significant factor for this analysis in which literature by Campo et al. (2015) discusses that victims are affected highly due to the scarcity and the distance of these government services for victims to reach these services. Further evidence will be required to make a justification, however, with consideration of the rates and literature, it can be concluded that rural areas may be prone to higher rates of domestic violence.
+
+\newpage
+## 4.6 Modelling 
+```{r}
+#Preprocess Dataset, add in urban and rates for 2021
+new_df <- DomesticViolenceRates20162022_filter %>%
+  select (c(Local.Government.Area, Urban.Rural, Domestic_Violence_Rate_2021))
+
+#Encode Urban.Rural
+new_df$Urban.Rural <- as.numeric(as.factor(new_df$Urban.Rural))
+
+#Median Income
+merged_dataIncomeDVRate_2021_model <- merged_dataIncomeDVRate_2021 %>%
+  select (c(Local.Government.Area,Median_tot_household_income_weekly))
+
+new_df <- merge(new_df, merged_dataIncomeDVRate_2021_model,
+                by.x = "Local.Government.Area", by.y="Local.Government.Area")
+
+#Standardise Median household income
+new_df$Median_tot_household_income_weekly <- scale(new_df$Median_tot_household_income_weekly)
+
+#Unemployment male and female
+merged_dataUnemploymentDVRate_2021_model <- merged_dataUnemploymentDVRate_2021 %>%
+  select (c(Local.Government.Area,Labour_force_status_Percent_Unemployment_Males, Labour_force_status_Percent_Unemployment_Females))
+
+new_df <- merge(new_df, merged_dataUnemploymentDVRate_2021_model,
+                by.x = "Local.Government.Area", by.y="Local.Government.Area")
+
+#Education
+NoEducation2021 <- merged_dataNoEducationDVRate_2021 %>%
+  select (c(Local.Government.Area,PERSONS_Did_not_go_to_school_Per_Capita))
+
+Year102021 <- merged_dataSchoolDVRate_2021 %>%
+  select (c(Local.Government.Area,Highest_year_of_school_completed_Year_10_or_equivalent_Persons_Per_Capita))
+
+Bachelors2021 <- merged_dataNonSchoolDVRate_2021 %>%
+  select (c(Local.Government.Area,Highest_non_school_qualifications_Bachelor_Degree_Level_Persons_Per_Capita))
+
+new_df <- merge(new_df, NoEducation2021,
+                by.x = "Local.Government.Area", by.y="Local.Government.Area")
+
+new_df <- merge(new_df, Year102021,
+                by.x = "Local.Government.Area", by.y="Local.Government.Area")
+
+new_df <- merge(new_df, Bachelors2021,
+                by.x = "Local.Government.Area", by.y="Local.Government.Area")
+
+```
+
+
+```{r}
+model<-lm(Domestic_Violence_Rate_2021~Median_tot_household_income_weekly+Urban.Rural+Labour_force_status_Percent_Unemployment_Males+Labour_force_status_Percent_Unemployment_Females+PERSONS_Did_not_go_to_school_Per_Capita+Highest_year_of_school_completed_Year_10_or_equivalent_Persons_Per_Capita+Highest_non_school_qualifications_Bachelor_Degree_Level_Persons_Per_Capita,data=new_df)
+```
+
+The summary of the model that was produced can be viewed below:
+
+```{r kable.opts=list(caption='Summary tables are printed with some default options.')}
+knit_print.table <- lemon_print
+summary(model)
+```
+
+The linear regression model uses independent variables discussed in previous sections for 2021. The dependent variable is domestic violence rates. Standardisation was performed on median household income while the urban/rural variable was encoded. There were no interaction terms used due to a lack of association between the variables. It was found that strong p-values were achieved for all of the variables excluding median household income and urban/rural LGAs, as values of 0.88 and 0.10 were outputted, meaning that there is not enough evidence for correlation, and the null hypothesis is accepted. As per the literature, urban/rural areas would have lower reporting due to less law enforcement in comparison to urban areas, which may skew results.
+
+# 5. Conclusion
+It was found that from this study, the factors which explain domestic violence rates are median household income, unemployment rates of males, low educational attainments, alcohol consumption and being in rural areas all contribute to domestic violence rates throughout NSW LGAs. Variables, including urban/rural comparison and educational attainments, will require further evidence to make a conclusion. However, this was not the case with the linear model developed in which it was found that median household income did not have a correlation to the dependent variable. With the results achieved, the hypothesis was correct in predicting that LGAs with lower household income, high male unemployment rates, and alcohol consumption will have higher rates of domestic violence.
+
+The literature provided has also assisted in this study for some factors. Some literature, like from Mouzos & Makkai (2020) claimed that there was research where higher domestic rates were reported by women with higher education. This was not the case when assessing bachelor’s degree attainment with domestic violence rates. However, educational attainment and urban/rural distinction will require further evidence due to the limitations of the data.
+
+Limitations of the study include cases that may not be considered as much, such as those regarding mental health patients, which are deemed confidential due to ethical concerns and underreporting or false reporting of cases. Another aspect is the skew in values plotted, which impacted correlation analysis, especially that of the educational attainment study. Future studies will include incorporating other datasets from BOCSAR and census data from previous years while concatenating the separate years into one single dataset that may allow for more evidence to justify said conclusions.
+
+\newpage
+# 6. Bibliography
+Aggarwal, R, Ranganathan, P 2017, 'Common pitfalls in statistical analysis: Linear regression analysis', *Perspect Clin Res*, vol. 8, no. 2, pp. 100-102
+
+Anderberg, D, Rainer, H, Wadsworth, J, Wilson, T 2016, 'Unemployment and Domestic Violence: Theory and Evidence', *The Economic Journal*, vol. 126, no. 597, pp. 1947-1979
+
+Australian Bureau of Statistics 2021, *Census DataPacks*, Australian Bureau of Statistics, Canberra, viewed 8 March 2023, https://www.abs.gov.au/census/find-census-data/datapacks
+
+Bharati, B, Famoye, F 2004, 'Domestic Violence against Women, and their economic dependence: A count data analysis', *Review of Political Economy*, vol. 16, no. 4, pp. 457-472
+
+Bureau of Crime Statistics and Research 2023, *Recorded crime reports*, Bureau of Crime Statistics and Research, Sydney, viewed 8 March 2023, https://www.bocsar.nsw.gov.au/Pages/bocsar_crime_stats/bocsar_crime_stats.aspx
+
+Bureau of Crime Statistics and Research 2023, *Violent Crime*, Bureau of Crime Statistics and Research, Sydney, viewed 8 March 2023,https://www.bocsar.nsw.gov.au/Pages/bocsar_pages/Violent%20Crime.aspx
+
+Caetono, R, Schafer, J, Cunradi, C 2001 'Alcohol-Related Intimate Partner Violence Among White, Black, and Hispanic Couples in the United States', *Alcohol Res Health*, vol. 25, no. 1, pp. 58-65
+
+Capaldi, D, Knoble, N, Shortt, J, Kim, H 2012, 'A Systematic Review of Risk Factors for Intimate Partner Violence', *Partner Abuse*, vol. 3, no. 2, pp. 231-280 
+
+Campo, M, Tayton, S 2015, *Domestic and family violence in regional, rural and remote communities*, AIFS, Melbourne.
+
+Cramer, C 2010, *Unemployment and Participation in Violence*, World Bank, Washington D.C., DC
+
+Gracia, E 2004, 'Unreported cases of domestic violence against women: towards an epidemiology of social silence, tolerance, and inhibition', *Journal of Epidemiology & Community Health*, vol. 58, no. 6, pp. 536-537
+
+Lubker, D 2004, 'Socioeconomic Status and Domestic Violence', *International Journal of Global Health Disparities*, vol. 3, no. 1, pp. 85-91
+
+Miczek, K, DeBold, J, Hwa, L, Newman, E, Almeida, R 2015, 'Alcohol and violence: neuropeptidergic modulation of monoamine systems', *Ann N Y Acad Sci*, vol. 1349, no. 1, pp. 96-118.
+
+Mitchell, L 2011, *Domestic violence in Australia - an overview of the issues*, Department of Parliamentary Services, Canberra.
+
+Mouzos, J, Makkai, T 2020, *Women's experiences of male violence: findings from the Australian component of the International Violence Against Women Survey (IVAWS)*, Australian Institute of Criminology, Canberra, ACT
+
+Naz, A, Ashraf, F 2020, 'The Relationship between Higher Education and Women Empowerment in Pakistan', *UMT Education Review*, vol. 3, no. 2, pp. 65-84.
+
+*'No-one will hear me scream': Domestic violence in regional, rural and remote NSW Community* 2022, Community Legal Centres NSW, viewed 11 April 2023, https://www.clcnsw.org.au/no-one-will-hear-me-scream-domestic-violence-regional-rural-and-remote-nsw
+
+Rose, A, Duka, T 2006, 'Effects of dose and time on the ability of alcohol to prime social drinkers', *Behav Pharmacol*, vol. 17, no. 1, pp. 61-70.
+
+Tauchen, H, Witte, A, & Long, S 1991, Domestic violence: a nonrandom affair, *International Economic Review*, vol. 32, no. 2 pp. 491–511.
+
+Vameghi, R, Akbari, S, Majd, H, Sajedi, F, & Sajjadi, H 2018, 'The comparison of socioeconomic status, perceived social support and mental status in women of reproductive age experiencing and not experiencing domestic violence in Iran', *J Inj Violence Res*, vol. 10, no. 1, pp. 35-44
