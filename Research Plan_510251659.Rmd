@@ -1,0 +1,78 @@
+---
+title: "Research plan"
+author: '510251659'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction 
+
+Domestic violence is considered to be a significant issue in many countries in today's world. Particularly, New South Wales (NSW) has experienced significant rates of domestic violence compared to other states in Australia. This research plan will discuss and focus on the literature, data, methodology, and expectations & limitations to determine factors that help to explain domestic violence rates in NSW Local Government Areas (LGAs).
+
+This research hypothesises that factors such as socioeconomic factors including median household income, unemployment rates, and the level of highest educational attainment explains domestic violence rates. Other factors include alcohol consumption and access to government services. It is predicted that low household median income, high unemployment rates amongst males, low educational attainment for both genders, high alcohol consumption and being in areas with inadequate access to government services will lead to higher rates of domestic violence. These are considered as studies show that domestic violence is linked to a low economic status (Vameghi et al. 2018). Capaldi et al. (2012) discuss that education, alcohol, income, and unemployment are all robust risk factors for intimate partner violence.
+
+# Literature and theory
+
+Lower socioeconomic inconsistency and status are associated with higher levels of stress and frustration, which in turn may lead to wife abuse (Lubker 2004). In low-income and middle-income households, women’s income increasing reduces the incidence of violence (Bharati & Famoye 2004). In developing and industrialised nations, there have been frustrations from being unemployed or irregular employment has been linked to forms of violence (Cramer 2011).
+
+Mouzos and Makkai (2020) claim that researchers have found an inverse relationship between women’s educational attainment and the risk of domestic violence, while others have found higher levels of violence reported by women with higher educational attainment. However, Naz & Ashraf (2020) claim that women having higher education increases their ability to make their own independent choices and assert legal rights, which may result in them reporting these cases.
+
+Miczek et al. (2015) claims that alcohol has been linked around half of all violent assaults, including domestic violence. Studies estimate that men were drinking in about 45% of domestic violence cases, and women were drinking in about 20% of the cases (Caetano et al. 2001). This is due to the inhibition due to alcohol, in which a study by Rose & Duka (2006) showed that test scores by individuals with more alcohol had more mistakes than those that had less alcohol in their system.
+
+Rural areas generally lack government services, such as law enforcement or medical services, compared to urban areas. Services in non-urban areas are affected due to the scarcity and the distance of these services for women to reach these services (Campo et al. 2015). Further issues include a lack of affordable legal services and longer response times for emergency services (Campo et al. 2015). Those living in the remote communities are 24 times more likely to be hospitalised as a result of domestic violence than people living in the cities. (Community Legal Centres 2022, para. 1).
+
+# Data and methodology
+
+Various data sources will be used in the research to be undergone. Data sources include the 2016 & 2021 Census NSW LGA data and the NSW Recorded Crime Statistics. The census data will focus on the socioeconomic factors per LGAs. The Crime Statistics go through the reported crimes based on the incident in each LGA, including alcohol-related cases. Contrasting urban LGAs and rural LGAs with domestic violence rates will measure access to government services and domestic violence’s relationship.
+
+The data analysis methodology will consist of undergoing a regression and correlation analysis for each factor. Independent variables include socioeconomic factors, alcohol consumption, and access to government services. The dependent variable will be domestic violence rates per 1,000 people per LGA. Scatter plots will be produced to visualise relationships between the variables using a line of best fit to their relationship. Different scatter plots will be produced per variable as there may be different instances. Education includes not finishing school, or having a bachelors degree. A multiple linear regression model will be developed, combining the independent variables to make predictions. This model is used as it is intended to undergo the measurement of a dependent variable based on the values from the independent variables.
+
+# Expectations and limitations
+
+Expectations include LGAs with lower household median incomes, lower educational attainment and high unemployment rates for males will have higher rates of domestic violence. There will also be a direct correlation between the consumption of alcohol and domestic violence rates. Rural areas are expected to correlate positively with the rate of domestic violence due to scarce government resources.
+
+Limitations of the research include the lack of some datasets consisting of factors that may have more impact on the rate of domestic violence, including mental disorders, which may be confidential between psychiatrists and patients with a mental health condition. Another limitation is underreporting, affecting accuracy of reports in which cases are not reported to the police. The assumptions of linear regression are another limitation. Aggarwal & Ranganathan (2017) discuss the assumptions which must be met to prevent misleading results: the x and y-axis variables being linear, and the variables of the sample must be independent of each other.
+
+# Bibliography
+
+Aggarwal, R, Ranganathan, P 2017, 'Common pitfalls in statistical analysis: Linear regression analysis', *Perspect Clin Res*, vol. 8, no. 2, pp. 100-102
+
+Anderberg, D, Rainer, H, Wadsworth, J, Wilson, T 2016, 'Unemployment and Domestic Violence: Theory and Evidence', *The Economic Journal*, vol. 126, no. 597, pp. 1947-1979
+
+Australian Bureau of Statistics 2021, *Census DataPacks*, Australian Bureau of Statistics, Canberra, viewed 8 March 2023, https://www.abs.gov.au/census/find-census-data/datapacks
+
+Bharati, B, Famoye, F 2004, 'Domestic Violence against Women, and their economic dependence: A count data analysis', *Review of Political Economy*, vol. 16, no. 4, pp. 457-472
+
+Bureau of Crime Statistics and Research 2023, *Recorded crime reports*, Bureau of Crime Statistics and Research, Sydney, viewed 8 March 2023, https://www.bocsar.nsw.gov.au/Pages/bocsar_crime_stats/bocsar_crime_stats.aspx
+
+Bureau of Crime Statistics and Research 2023, *Violent Crime*, Bureau of Crime Statistics and Research, Sydney, viewed 8 March 2023,https://www.bocsar.nsw.gov.au/Pages/bocsar_pages/Violent%20Crime.aspx
+
+Caetono, R, Schafer, J, Cunradi, C 2001 'Alcohol-Related Intimate Partner Violence Among White, Black, and Hispanic Couples in the United States', *Alcohol Res Health*, vol. 25, no. 1, pp. 58-65
+
+Capaldi, D, Knoble, N, Shortt, J, Kim, H 2012, 'A Systematic Review of Risk Factors for Intimate Partner Violence', *Partner Abuse*, vol. 3, no. 2, pp. 231-280 
+
+Campo, M, Tayton, S 2015, *Domestic and family violence in regional, rural and remote communities*, AIFS, Melbourne.
+
+Cramer, C 2010, *Unemployment and Participation in Violence*, World Bank, Washington D.C., DC
+
+Lubker, D 2004, 'Socioeconomic Status and Domestic Violence', *International Journal of Global Health Disparities*, vol. 3, no. 1, pp. 85-91
+
+Miczek, K, DeBold, J, Hwa, L, Newman, E, Almeida, R 2015, 'Alcohol and violence: neuropeptidergic modulation of monoamine systems', *Ann N Y Acad Sci*, vol. 1349, no. 1, pp. 96-118.
+
+Mouzos, J, Makkai, T 2020, *Women's experiences of male violence: findings from the Australian component of the International Violence Against Women Survey (IVAWS)*, Australian Institute of Criminology, Canberra, ACT
+
+Naz, A, Ashraf, F 2020, 'The Relationship between Higher Education and Women Empowerment in Pakistan', *UMT Education Review*, vol. 3, no. 2, pp. 65-84.
+
+*'No-one will hear me scream': Domestic violence in regional, rural and remote NSW Community* 2022, Community Legal Centres NSW, viewed 11 April 2023, https://www.clcnsw.org.au/no-one-will-hear-me-scream-domestic-violence-regional-rural-and-remote-nsw
+
+Rose, A, Duka, T 2006, 'Effects of dose and time on the ability of alcohol to prime social drinkers', *Behav Pharmacol*, vol. 17, no. 1, pp. 61-70.
+
+Tauchen, H, Witte, A, & Long, S 1991, Domestic violence: a nonrandom affair, *International Economic Review*, vol. 32, no. 2 pp. 491–511.
+
+Vameghi, R, Akbari, S, Majd, H, Sajedi, F, & Sajjadi, H 2018, 'The comparison of socioeconomic status, perceived social support and mental status in women of reproductive age experiencing and not experiencing domestic violence in Iran', *J Inj Violence Res*, vol. 10, no. 1, pp. 35-44
+
